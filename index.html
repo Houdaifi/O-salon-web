@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="O'salon — Find the best salons & barbershops near you in Morocco." />
+  <title>O'salon — Find the Best Salons in Morocco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Light theme ── */
+    :root {
+      --men:        #185FA5;
+      --women:      #993556;
+      --men-light:  #D6E8F8;
+      --women-light:#F5DCE8;
+      --bg:         #F4F5F8;
+      --surface:    #FFFFFF;
+      --text:       #111122;
+      --text-sub:   #4A4A6A;
+      --border:     #DDDDE8;
+      --card-bg:    #FFFFFF;
+      --shadow:     0 4px 20px rgba(0,0,0,.08);
+      --grad-a:     #185FA5;
+      --grad-b:     #993556;
+      /* navbar specific */
+      --nav-bg:     #FFFFFF;
+      --nav-text:   #111122;
+      --nav-sub:    #4A4A6A;
+      --nav-border: rgba(0,0,0,0.10);
+      --nav-ctrl-bg:#F0F0F5;
+      --nav-ctrl-border: #DDDDE8;
+      --nav-ctrl-text: #333355;
+    }
+
+    /* ── Dark theme ── */
+    [data-theme="dark"] {
+      --bg:         #0F1020;
+      --surface:    #16172A;
+      --text:       #EEEEF8;
+      --text-sub:   #9090B8;
+      --border:     #2A2B44;
+      --card-bg:    #1E1F38;
+      --shadow:     0 4px 20px rgba(0,0,0,.35);
+      --men-light:  #162A44;
+      --women-light:#2D1222;
+      --nav-bg:     #16172A;
+      --nav-text:   #EEEEF8;
+      --nav-sub:    #9090B8;
+      --nav-border: rgba(255,255,255,0.08);
+      --nav-ctrl-bg:#0F1020;
+      --nav-ctrl-border: #2A2B44;
+      --nav-ctrl-text: #CCCCEE;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    [lang="ar"] body, [lang="ar"] * { font-family: 'Cairo', system-ui, sans-serif; }
+
+    .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .section { padding: 84px 0; }
+
+    .grad-text {
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: var(--men);
+    }
+
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+    .fade-in.vis { opacity: 1; transform: none; }
+
+    /* ════════════════════════════════
+       NAVBAR
+    ════════════════════════════════ */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      background: var(--nav-bg);
+      border-bottom: 1.5px solid var(--nav-border);
+      box-shadow: 0 2px 16px rgba(0,0,0,.10);
+      transition: background .3s, border-color .3s;
+    }
+    .nav-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo { width: 34px; height: 34px; border-radius: 8px; display: block; }
+    .nav-app-name {
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--nav-text);
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-controls { display: flex; align-items: center; gap: 8px; }
+
+    /* Language switcher */
+    .lang-switcher {
+      display: flex; align-items: center;
+      background: var(--nav-ctrl-bg);
+      border: 1.5px solid var(--nav-ctrl-border);
+      border-radius: 100px;
+      padding: 3px; gap: 2px;
+    }
+    .lang-btn {
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      font-size: .75rem; font-weight: 700;
+      color: var(--nav-ctrl-text);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .18s, color .18s;
+      line-height: 1.4;
+      user-select: none;
+    }
+    .lang-btn:hover { color: var(--text); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color: #ffffff !important;
+    }
+
+    /* Dark mode toggle */
+    .theme-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--nav-ctrl-border);
+      background: var(--nav-ctrl-bg);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: background .18s, border-color .18s, transform .18s;
+      flex-shrink: 0;
+      color: var(--nav-ctrl-text);
+    }
+    .theme-btn:hover { transform: rotate(15deg) scale(1.1); }
+    .theme-icon-light { display: block; }
+    .theme-icon-dark  { display: none; }
+    [data-theme="dark"] .theme-icon-light { display: none; }
+    [data-theme="dark"] .theme-icon-dark  { display: block; }
+
+    /* Nav CTA */
+    .nav-cta {
+      display: inline-flex; align-items: center;
+      padding: 9px 20px;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color: #fff !important;
+      font-size: .82rem; font-weight: 700;
+      text-decoration: none;
+      border-radius: 100px;
+      white-space: nowrap;
+      transition: opacity .2s, transform .2s;
+      -webkit-text-fill-color: #fff;
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    #hero {
+      padding-top: 120px; padding-bottom: 80px;
+      background: var(--surface);
+      overflow: hidden; position: relative;
+    }
+    #hero::before, #hero::after {
+      content: ''; position: absolute; border-radius: 50%;
+      filter: blur(90px); pointer-events: none;
+    }
+    #hero::before { width:400px;height:400px;background:rgba(24,95,165,.13);top:-60px;left:-80px; }
+    #hero::after  { width:340px;height:340px;background:rgba(153,53,86,.12);bottom:-40px;right:-60px; }
+
+    .hero-inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center; gap: 40px;
+    }
+    .hero-content { max-width: 640px; width: 100%; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      font-size: .78rem; font-weight: 600; color: var(--text-sub);
+      margin-bottom: 22px;
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      flex-shrink: 0;
+    }
+    .hero-title {
+      font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+      font-weight: 900; line-height: 1.12;
+      color: var(--text); margin-bottom: 18px;
+    }
+    .hero-tagline {
+      font-size: clamp(.92rem, 2vw, 1.1rem);
+      color: var(--text-sub); margin-bottom: 12px;
+      max-width: 500px; margin-left: auto; margin-right: auto;
+    }
+    .coming-soon-notice {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .78rem; font-weight: 600; color: var(--men);
+      padding: 5px 14px; background: var(--men-light);
+      border-radius: 100px; margin-bottom: 26px;
+    }
+    .hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* Store buttons */
+    .store-btn {
+      display: flex; align-items: center; gap: 11px;
+      padding: 11px 22px 15px; border-radius: 14px;
+      text-decoration: none; font-weight: 600;
+      min-width: 175px; position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .store-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .store-btn-dark  { background: var(--text); color: var(--surface); }
+    .store-btn-dark * { color: var(--surface) !important; fill: var(--surface) !important; }
+    .store-btn-light { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+    .store-icon { width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .store-label { text-align: start; }
+    .store-label small { display:block;font-size:.66rem;font-weight:400;opacity:.6;line-height:1;margin-bottom:2px; }
+    .store-label strong { font-size:.9rem;line-height:1; }
+    .soon-badge {
+      position:absolute;top:0;right:0;
+      background:#F2680A;color:#fff;
+      font-size:.57rem;font-weight:800;
+      padding:3px 8px;
+      border-bottom-left-radius:10px;border-top-right-radius:14px;
+      text-transform:uppercase;letter-spacing:.04em;
+    }
+    .btn-bar { position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(128,128,128,.15);border-radius:0 0 14px 14px; }
+    .btn-bar-fill { height:100%;border-radius:inherit;animation:barpulse 2.4s ease-in-out infinite; }
+    .store-btn-dark  .btn-bar-fill { background:rgba(255,255,255,.55); }
+    .store-btn-light .btn-bar-fill { background:linear-gradient(90deg,var(--grad-a),var(--grad-b)); }
+    @keyframes barpulse { 0%,100%{width:80%;opacity:.7} 50%{width:90%;opacity:1} }
+
+    /* Launch progress */
+    .launch-track-wrap { margin-top:20px;max-width:360px;margin-left:auto;margin-right:auto; }
+    .launch-track { height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:7px; }
+    .launch-fill { width:87%;height:100%;background:linear-gradient(90deg,var(--grad-a),var(--grad-b));border-radius:100px;animation:shine 2.5s ease-in-out infinite; }
+    @keyframes shine { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
+    .launch-label { display:flex;justify-content:space-between;font-size:.73rem;color:var(--text-sub); }
+    .launch-pct { font-weight:700;color:var(--men); }
+
+    /* Phone mockup */
+    .phone-wrap {
+      width:210px;height:420px;
+      background:var(--text);
+      border-radius:36px;padding:10px;
+      box-shadow:0 28px 64px rgba(0,0,0,.22),0 0 0 1.5px rgba(255,255,255,.06);
+      position:relative;
+    }
+    .phone-screen {
+      width:100%;height:100%;
+      background:linear-gradient(135deg,var(--grad-a),var(--grad-b));
+      border-radius:28px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+      overflow:hidden;position:relative;
+    }
+    .phone-screen::before { content:'';position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07);top:-40px;right:-30px; }
+    .phone-notch { position:absolute;top:17px;left:50%;transform:translateX(-50%);width:64px;height:18px;background:var(--text);border-radius:100px;z-index:2; }
+    .phone-logo-wrap { width:56px;height:56px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative;z-index:1; }
+    .phone-text { color:rgba(255,255,255,.88);font-size:.7rem;font-weight:600;text-align:center;padding:0 16px;position:relative;z-index:1;line-height:1.5; }
+    .phone-dots { display:flex;gap:5px;position:relative;z-index:1; }
+    .phone-dots span { width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4); }
+    .phone-dots span:first-child { background:#fff; }
+    .phone-chip { position:absolute;background:var(--surface);border-radius:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:7px;padding:7px 11px;font-size:.68rem;font-weight:600;color:var(--text);white-space:nowrap; }
+    .chip-left  { right:-95px;top:72px; }
+    .chip-right { right:-95px;bottom:80px; }
+    .chip-dot { width:9px;height:9px;border-radius:50%;flex-shrink:0; }
+
+    /* ════════════════════════════════
+       ABOUT
+    ════════════════════════════════ */
+    #about { background: var(--bg); }
+    .about-inner { display:grid;grid-template-columns:1fr;gap:44px;align-items:center; }
+
+    .section-tag {
+      display:inline-block;font-size:.72rem;font-weight:800;
+      letter-spacing:.1em;text-transform:uppercase;
+      background:linear-gradient(135deg,var(--grad-a),var(--grad-b));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      color:var(--men);margin-bottom:12px;
+    }
+    [dir="rtl"] .section-tag { letter-spacing:0; }
+    .section-title { font-size:clamp(1.55rem,3.8vw,2.3rem);font-weight:800;color:var(--text);line-height:1.2;margin-bottom:14px; }
+    .section-body { font-size:1.02rem;color:var(--text-sub);max-width:550px; }
+
+    .mode-chips { display:flex;flex-wrap:wrap;gap:10px;margin-top:22px; }
+    .chip-mode { display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:100px;font-size:.88rem;font-weight:700; }
+    .chip-men   { background:var(--men-light);   color:var(--men); }
+    .chip-women { background:var(--women-light); color:var(--women); }
+
+    .stats-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+    .stat-card { background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:22px 14px;text-align:center;box-shadow:var(--shadow); }
+    .stat-num { font-size:1.9rem;font-weight:900;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:var(--men); }
+    .stat-lbl { font-size:.73rem;color:var(--text-sub);font-weight:500; }
+
+    /* ════════════════════════════════
+       SALON TYPES
+    ════════════════════════════════ */
+    #types { background: var(--surface); }
+    .section-hdr { text-align:center;margin-bottom:48px; }
+    .section-hdr .section-body { margin:0 auto;text-align:center; }
+    .types-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:14px; }
+    .type-card { background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:20px 16px;display:flex;align-items:flex-start;gap:12px;transition:transform .22s,box-shadow .22s; }
+    .type-card:hover { transform:translateY(-3px);box-shadow:var(--shadow); }
+    .type-icon { font-size:1.4rem;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .ti1 { background:var(--men-light); }
+    .ti2 { background:var(--women-light); }
+    .ti3 { background:#D8F0E8; } [data-theme="dark"] .ti3 { background:#0E2B1E; }
+    .ti4 { background:#FCE8D8; } [data-theme="dark"] .ti4 { background:#2B1A0E; }
+    .ti5 { background:#E8D8FC; } [data-theme="dark"] .ti5 { background:#1C0E2B; }
+    .ti6 { background:#FCE0EA; } [data-theme="dark"] .ti6 { background:#2B0E1A; }
+    .type-name { font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:3px; }
+    .type-desc { font-size:.8rem;color:var(--text-sub);line-height:1.5; }
+    .type-tags { display:flex;gap:5px;margin-top:7px;flex-wrap:wrap; }
+    .ttag { font-size:.63rem;font-weight:700;padding:2px 7px;border-radius:100px; }
+    .ttag-men   { background:var(--men-light);   color:var(--men); }
+    .ttag-women { background:var(--women-light); color:var(--women); }
+
+    /* ════════════════════════════════
+       FEATURES
+    ════════════════════════════════ */
+    #features { background: var(--bg); }
+    .features-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:16px; }
+    .feat-card { background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:26px 22px;transition:transform .22s,box-shadow .22s; }
+    .feat-card:hover { transform:translateY(-3px);box-shadow:var(--shadow); }
+    .feat-icon { width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px; }
+    .fi1 { background:var(--men-light); }
+    .fi2 { background:#FCE8D8; } [data-theme="dark"] .fi2 { background:#2B1A0E; }
+    .fi3 { background:var(--women-light); }
+    .fi4 { background:var(--men-light); }
+    .feat-title { font-size:.97rem;font-weight:700;color:var(--text);margin-bottom:7px; }
+    .feat-desc  { font-size:.85rem;color:var(--text-sub);line-height:1.6; }
+
+    /* ════════════════════════════════
+       HOW IT WORKS
+    ════════════════════════════════ */
+    #how { background: var(--surface); }
+    .steps-grid { display:grid;grid-template-columns:1fr;gap:12px; }
+    .step-card { background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:26px 22px;display:flex;align-items:flex-start;gap:18px;transition:transform .22s,box-shadow .22s; }
+    .step-card:hover { transform:translateY(-3px);box-shadow:var(--shadow); }
+    .step-num { width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));color:#fff;font-size:1.1rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(24,95,165,.3); }
+    .step-title { font-size:1rem;font-weight:700;color:var(--text);margin-bottom:5px; }
+    .step-desc  { font-size:.84rem;color:var(--text-sub); }
+
+    /* ════════════════════════════════
+       CTA BANNER
+    ════════════════════════════════ */
+    #cta { padding:80px 0;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));position:relative;overflow:hidden; }
+    #cta::before { content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.06);top:-150px;right:-100px;pointer-events:none; }
+    .cta-inner { position:relative;z-index:1;text-align:center; }
+    .cta-title { font-size:clamp(1.6rem,5vw,2.5rem);font-weight:900;color:#fff;margin-bottom:12px;line-height:1.15; }
+    .cta-body { font-size:1rem;color:rgba(255,255,255,.82);margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto; }
+    .cta-btns { display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:20px; }
+    .cta-btn-w { background:#fff;color:#111; }
+    .cta-btn-w * { color:#111 !important; }
+    .cta-btn-w .btn-bar-fill { background:linear-gradient(90deg,var(--grad-a),var(--grad-b));opacity:.5; }
+    .cta-btn-o { background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5); }
+    .cta-btn-o * { color:#fff !important; fill:#fff !important; }
+    .cta-btn-o .btn-bar-fill { background:rgba(255,255,255,.6); }
+    .cta-notice { color:rgba(255,255,255,.65);font-size:.78rem;font-weight:500; }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    footer { background:#0D0D1C;color:rgba(255,255,255,.6);padding:50px 0 26px; }
+    .footer-top { display:flex;flex-direction:column;gap:28px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:22px; }
+    .footer-logo-row { display:flex;align-items:center;gap:9px;margin-bottom:9px; }
+    .footer-logo { width:34px;height:34px;border-radius:8px; }
+    .footer-app-name { font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .footer-tagline { font-size:.85rem;color:rgba(255,255,255,.4);max-width:270px;line-height:1.5; }
+    .footer-links { display:flex;flex-direction:column;gap:9px; }
+    .footer-links a { color:rgba(255,255,255,.5);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s; }
+    .footer-links a:hover { color:#fff; }
+    .footer-bottom { text-align:center;font-size:.76rem;color:rgba(255,255,255,.27); }
+
+    /* ════════════════════════════════
+       RTL
+    ════════════════════════════════ */
+    [dir="rtl"] .chip-left  { left:-80px; right:auto; }
+    [dir="rtl"] .chip-right { left:-80px; right:auto; }
+    [dir="rtl"] .soon-badge { right:auto;left:0;border-radius:14px 0 10px 0; }
+    [dir="rtl"] .store-label { text-align:end; }
+    [dir="rtl"] .launch-label { flex-direction:row-reverse; }
+
+    /* ════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════ */
+    @media (min-width: 640px) {
+      .hero-inner { flex-direction:row;text-align:start;justify-content:space-between; }
+      .hero-content { text-align:start; }
+      .hero-tagline { margin-left:0;margin-right:0; }
+      .hero-buttons { justify-content:flex-start; }
+      .launch-track-wrap { margin-left:0;margin-right:auto; }
+      .coming-soon-notice { margin-left:0; }
+      .about-inner { grid-template-columns:1fr 1fr; }
+      .steps-grid  { grid-template-columns:repeat(3,1fr); }
+      .step-card   { flex-direction:column;align-items:flex-start; }
+      .footer-top  { flex-direction:row;justify-content:space-between;align-items:flex-start; }
+    }
+    @media (min-width: 768px) {
+      .features-grid { grid-template-columns:repeat(4,1fr); }
+      .types-grid    { grid-template-columns:repeat(3,1fr); }
+    }
+    @media (max-width: 639px) {
+      .phone-chip { display:none; }
+      .hero-mockup { order:-1; }
+      .nav-cta { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="site-nav">
+  <div class="container nav-inner">
+    <a href="#hero" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 624.84 610.85" xmlns="http://www.w3.org/2000/svg">
+        <rect fill="#00122d" x="42.32" y="35.33" width="540.19" height="540.19" rx="114.56" ry="114.56"/>
+        <path fill="#f2680a" d="m366.57,227.92c27.22-16.84,43.77-35.94,43.77-58.42,0-18.86-11.24-28.41-28.7-28.41s-28.12,9.55-28.12,25.9c0,.07,0,.13,0,.2.05,8.98,5.12,17.2,12.71,22.01l5.28,3.35c0,6.96-3.75,13.92-13.01,19.97l8.07,15.4Z"/>
+        <path fill="#fff" d="m426.68,246.89c-.61-21.58-4.05-40.28-10.45-55.99-4.96,12.17-14.4,23.66-28.36,34.59,2.07,8.91,3.09,18.88,3.09,29.86,0,52.43-27.68,79.8-78.51,80.49-50.83-.68-78.56-28.06-78.56-80.49s24.9-83.95,78.54-84.38c12.14.1,22.82,1.67,32.08,4.73-.71-2.73-1.09-5.57-1.09-8.45v-.25c0-12.85,5.47-23.2,14.75-29.45-13.23-4.2-28.46-6.43-45.75-6.55-75.8.63-112.19,40.96-114.26,115.91-.08,2.28-.1,69.56-.1,71.91,0,76.44,103,161.07,114.37,161.07s114.36-84.64,114.36-161.07c0-2.35-.03-69.63-.1-71.91Z"/>
+      </svg>
+      <span class="nav-app-name">O'salon</span>
+    </a>
+    <div class="nav-controls">
+      <div class="lang-switcher" id="langSwitcher">
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+        <button type="button" class="lang-btn" data-lang="fr">FR</button>
+        <button type="button" class="lang-btn" data-lang="ar">عر</button>
+      </div>
+      <button type="button" class="theme-btn" id="themeBtn" title="Toggle dark/light mode">
+        <span class="theme-icon-light">🌙</span>
+        <span class="theme-icon-dark">☀️</span>
+      </button>
+      <a href="#cta" class="nav-cta" id="navCta">Download App</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container hero-inner">
+    <div class="hero-content fade-in">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span id="heroBadge">Now available in Morocco</span>
+      </div>
+      <h1 class="hero-title" id="heroTitle">
+        Find the best <span class="grad-text">salons &amp; barbershops</span> near you
+      </h1>
+      <p class="hero-tagline" id="heroTagline">
+        Discover top-rated salons, barbershops, spas and hammams across Morocco.
+        Browse, compare, and book your next appointment in seconds.
+      </p>
+      <p class="coming-soon-notice" id="comingSoonNotice">🚀 Launching soon on App Store &amp; Google Play</p>
+      <div class="hero-buttons">
+        <a href="#" class="store-btn store-btn-dark">
+          <span class="soon-badge" id="soonTag1">Soon</span>
+          <span class="store-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+          </span>
+          <span class="store-label">
+            <small id="appStoreSub">Download on the</small>
+            <strong id="appStoreLabel">App Store</strong>
+          </span>
+          <span class="btn-bar"><span class="btn-bar-fill"></span></span>
+        </a>
+        <a href="#" class="store-btn store-btn-light">
+          <span class="soon-badge" id="soonTag2">Soon</span>
+          <span class="store-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#185FA5"/><stop offset="100%" stop-color="#993556"/></linearGradient></defs>
+              <path fill="url(#gp)" d="M3.18 23.76c.3.16.65.18.97.05L14.32 12 3.18.2c-.33-.14-.68-.1-.97.05C1.75.56 1.5 1 1.5 1.5v20.99c0 .5.25.96.68 1.27zM15.9 10.42l2.36-2.36-9.4-5.43 7.04 7.79zm2.36 5.52-2.36-2.36-7.04 7.79 9.4-5.43zm2.47-8.8-3.42-1.98-2.67 2.67L17.3 12l-2.66 2.17 2.67 2.67 3.42-1.98C21.35 14.36 22 13.25 22 12s-.65-2.36-1.27-2.86z"/>
+            </svg>
+          </span>
+          <span class="store-label">
+            <small id="googlePlaySub">Get it on</small>
+            <strong id="googlePlayLabel">Google Play</strong>
+          </span>
+          <span class="btn-bar"><span class="btn-bar-fill"></span></span>
+        </a>
+      </div>
+      <div class="launch-track-wrap">
+        <div class="launch-track"><div class="launch-fill"></div></div>
+        <div class="launch-label">
+          <span id="progressLabel">App review in progress · Almost there!</span>
+          <span class="launch-pct">87%</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-mockup fade-in" style="transition-delay:.15s">
+      <div class="phone-chip chip-left">
+        <span class="chip-dot" style="background:#185FA5"></span>
+        <span id="menMode">Men Mode</span>
+      </div>
+      <div class="phone-chip chip-right">
+        <span class="chip-dot" style="background:#993556"></span>
+        <span id="womenMode">Women Mode</span>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-logo-wrap">
+            <svg viewBox="0 0 624.84 610.85" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+              <rect fill="#00122d" x="42.32" y="35.33" width="540.19" height="540.19" rx="114.56" ry="114.56"/>
+              <path fill="#f2680a" d="m366.57,227.92c27.22-16.84,43.77-35.94,43.77-58.42,0-18.86-11.24-28.41-28.7-28.41s-28.12,9.55-28.12,25.9c0,.07,0,.13,0,.2.05,8.98,5.12,17.2,12.71,22.01l5.28,3.35c0,6.96-3.75,13.92-13.01,19.97l8.07,15.4Z"/>
+              <path fill="#fff" d="m426.68,246.89c-.61-21.58-4.05-40.28-10.45-55.99-4.96,12.17-14.4,23.66-28.36,34.59,2.07,8.91,3.09,18.88,3.09,29.86,0,52.43-27.68,79.8-78.51,80.49-50.83-.68-78.56-28.06-78.56-80.49s24.9-83.95,78.54-84.38c12.14.1,22.82,1.67,32.08,4.73-.71-2.73-1.09-5.57-1.09-8.45v-.25c0-12.85,5.47-23.2,14.75-29.45-13.23-4.2-28.46-6.43-45.75-6.55-75.8.63-112.19,40.96-114.26,115.91-.08,2.28-.1,69.56-.1,71.91,0,76.44,103,161.07,114.37,161.07s114.36-84.64,114.36-161.07c0-2.35-.03-69.63-.1-71.91Z"/>
+            </svg>
+          </div>
+          <p class="phone-text" id="phoneText">Salons &amp; Barbershops<br>near you in Morocco</p>
+          <div class="phone-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="container about-inner">
+    <div class="fade-in">
+      <span class="section-tag" id="aboutTag">What is O'salon</span>
+      <h2 class="section-title" id="aboutTitle">Your beauty &amp; grooming companion</h2>
+      <p class="section-body" id="aboutBody">O'salon is a mobile app designed for Morocco — connecting people with the best salons, barbershops, spas, and hammams in their city. Available in both Men and Women modes, O'salon makes it effortless to discover, compare, and book.</p>
+      <div class="mode-chips">
+        <span class="chip-mode chip-men">👨 <span id="menMode2">Men Mode</span></span>
+        <span class="chip-mode chip-women">👩 <span id="womenMode2">Women Mode</span></span>
+      </div>
+    </div>
+    <div class="stats-grid fade-in" style="transition-delay:.1s">
+      <div class="stat-card"><div class="stat-num">100+</div><div class="stat-lbl" id="statSalons">Salons listed</div></div>
+      <div class="stat-card"><div class="stat-num">10+</div><div class="stat-lbl" id="statCities">Cities covered</div></div>
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-lbl" id="statModes">Men &amp; Women modes</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SALON TYPES -->
+<section id="types" class="section">
+  <div class="container">
+    <div class="section-hdr fade-in">
+      <span class="section-tag" id="typesTag">Salon Types</span>
+      <h2 class="section-title" id="typesTitle">For every beauty &amp; grooming need</h2>
+      <p class="section-body" id="typesBody">O'salon covers all types of beauty and wellness venues across Morocco — from modern barbershops to traditional hammams.</p>
+    </div>
+    <div class="types-grid">
+      <div class="type-card fade-in"><div class="type-icon ti1">💈</div><div><p class="type-name" id="t1Name">Barbershop</p><p class="type-desc" id="t1Desc">Modern cuts, beard trims &amp; traditional shaves for men.</p><div class="type-tags"><span class="ttag ttag-men" id="t1Tag1">Men</span></div></div></div>
+      <div class="type-card fade-in" style="transition-delay:.06s"><div class="type-icon ti2">💇</div><div><p class="type-name" id="t2Name">Women's Salon</p><p class="type-desc" id="t2Desc">Hair styling, coloring, and full beauty treatments.</p><div class="type-tags"><span class="ttag ttag-women" id="t2Tag1">Women</span></div></div></div>
+      <div class="type-card fade-in" style="transition-delay:.12s"><div class="type-icon ti3">🧖</div><div><p class="type-name" id="t3Name">Spa &amp; Hammam</p><p class="type-desc" id="t3Desc">Relaxation, traditional hammam &amp; wellness sessions.</p><div class="type-tags"><span class="ttag ttag-men" id="t3Tag1">Men</span><span class="ttag ttag-women" id="t3Tag2">Women</span></div></div></div>
+      <div class="type-card fade-in" style="transition-delay:.18s"><div class="type-icon ti4">🩸</div><div><p class="type-name" id="t4Name">Hijama</p><p class="type-desc" id="t4Desc">Traditional cupping therapy by certified specialists.</p><div class="type-tags"><span class="ttag ttag-men" id="t4Tag1">Men</span><span class="ttag ttag-women" id="t4Tag2">Women</span></div></div></div>
+      <div class="type-card fade-in" style="transition-delay:.24s"><div class="type-icon ti5">✂️</div><div><p class="type-name" id="t5Name">Hair Studio</p><p class="type-desc" id="t5Desc">Extensions, coloring, keratin &amp; advanced hair care.</p><div class="type-tags"><span class="ttag ttag-women" id="t5Tag1">Women</span></div></div></div>
+      <div class="type-card fade-in" style="transition-delay:.30s"><div class="type-icon ti6">💅</div><div><p class="type-name" id="t6Name">Nail &amp; Beauty</p><p class="type-desc" id="t6Desc">Manicure, pedicure &amp; nail art studios.</p><div class="type-tags"><span class="ttag ttag-women" id="t6Tag1">Women</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section">
+  <div class="container">
+    <div class="section-hdr fade-in">
+      <span class="section-tag" id="featuresTag">Features</span>
+      <h2 class="section-title" id="featuresTitle">Everything you need in one app</h2>
+      <p class="section-body" id="featuresBody">From discovery to booking, O'salon covers every step of your beauty &amp; grooming journey.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card fade-in"><div class="feat-icon fi1">📍</div><h3 class="feat-title" id="f1Title">Find nearby salons</h3><p class="feat-desc" id="f1Desc">Browse salons and barbershops close to you, filtered by city and service type.</p></div>
+      <div class="feat-card fade-in" style="transition-delay:.08s"><div class="feat-icon fi2">⭐</div><h3 class="feat-title" id="f2Title">Reviews &amp; ratings</h3><p class="feat-desc" id="f2Desc">Read honest reviews from real customers and choose with confidence.</p></div>
+      <div class="feat-card fade-in" style="transition-delay:.16s"><div class="feat-icon fi3">📅</div><h3 class="feat-title" id="f3Title">Easy booking</h3><p class="feat-desc" id="f3Desc">Select your service, pick a time slot, and confirm your appointment in seconds.</p></div>
+      <div class="feat-card fade-in" style="transition-delay:.24s"><div class="feat-icon fi4">✂️</div><h3 class="feat-title" id="f4Title">Men &amp; Women modes</h3><p class="feat-desc" id="f4Desc">Switch between dedicated Men and Women experiences tailored to each audience.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section">
+  <div class="container">
+    <div class="section-hdr fade-in">
+      <span class="section-tag" id="howTag">How it works</span>
+      <h2 class="section-title" id="howTitle">3 simple steps</h2>
+      <p class="section-body" id="howBody">Getting your next appointment has never been this easy.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-in"><div class="step-num">1</div><div><h3 class="step-title" id="s1Title">Choose your city</h3><p class="step-desc" id="s1Desc">Select your city or let the app detect your location to see salons near you.</p></div></div>
+      <div class="step-card fade-in" style="transition-delay:.1s"><div class="step-num">2</div><div><h3 class="step-title" id="s2Title">Find a salon near you</h3><p class="step-desc" id="s2Desc">Browse profiles, photos, services, and reviews to pick the perfect place.</p></div></div>
+      <div class="step-card fade-in" style="transition-delay:.2s"><div class="step-num">3</div><div><h3 class="step-title" id="s3Title">Book your appointment</h3><p class="step-desc" id="s3Desc">Choose your professional, pick a time, and you're all set. It's that simple.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container cta-inner fade-in">
+    <h2 class="cta-title" id="ctaTitle">Ready to book your next session?</h2>
+    <p class="cta-body" id="ctaBody">Download O'salon for free and discover the best salons and barbershops in your city.</p>
+    <div class="cta-btns">
+      <a href="#" class="store-btn cta-btn-w">
+        <span class="soon-badge" id="soonTag3">Soon</span>
+        <span class="store-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="#111"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></span>
+        <span class="store-label"><small id="appStoreSub2">Download on the</small><strong id="appStoreLabel2">App Store</strong></span>
+        <span class="btn-bar"><span class="btn-bar-fill"></span></span>
+      </a>
+      <a href="#" class="store-btn cta-btn-o">
+        <span class="soon-badge" id="soonTag4">Soon</span>
+        <span class="store-icon"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="white" d="M3.18 23.76c.3.16.65.18.97.05L14.32 12 3.18.2c-.33-.14-.68-.1-.97.05C1.75.56 1.5 1 1.5 1.5v20.99c0 .5.25.96.68 1.27zM15.9 10.42l2.36-2.36-9.4-5.43 7.04 7.79zm2.36 5.52-2.36-2.36-7.04 7.79 9.4-5.43zm2.47-8.8-3.42-1.98-2.67 2.67L17.3 12l-2.66 2.17 2.67 2.67 3.42-1.98C21.35 14.36 22 13.25 22 12s-.65-2.36-1.27-2.86z"/></svg></span>
+        <span class="store-label"><small id="googlePlaySub2">Get it on</small><strong id="googlePlayLabel2">Google Play</strong></span>
+        <span class="btn-bar"><span class="btn-bar-fill"></span></span>
+      </a>
+    </div>
+    <p class="cta-notice" id="ctaNotice">🚀 Launching soon on App Store &amp; Google Play</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo-row">
+          <svg class="footer-logo" viewBox="0 0 624.84 610.85" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="#00122d" x="42.32" y="35.33" width="540.19" height="540.19" rx="114.56" ry="114.56"/>
+            <path fill="#f2680a" d="m366.57,227.92c27.22-16.84,43.77-35.94,43.77-58.42,0-18.86-11.24-28.41-28.7-28.41s-28.12,9.55-28.12,25.9c0,.07,0,.13,0,.2.05,8.98,5.12,17.2,12.71,22.01l5.28,3.35c0,6.96-3.75,13.92-13.01,19.97l8.07,15.4Z"/>
+            <path fill="#fff" d="m426.68,246.89c-.61-21.58-4.05-40.28-10.45-55.99-4.96,12.17-14.4,23.66-28.36,34.59,2.07,8.91,3.09,18.88,3.09,29.86,0,52.43-27.68,79.8-78.51,80.49-50.83-.68-78.56-28.06-78.56-80.49s24.9-83.95,78.54-84.38c12.14.1,22.82,1.67,32.08,4.73-.71-2.73-1.09-5.57-1.09-8.45v-.25c0-12.85,5.47-23.2,14.75-29.45-13.23-4.2-28.46-6.43-45.75-6.55-75.8.63-112.19,40.96-114.26,115.91-.08,2.28-.1,69.56-.1,71.91,0,76.44,103,161.07,114.37,161.07s114.36-84.64,114.36-161.07c0-2.35-.03-69.63-.1-71.91Z"/>
+          </svg>
+          <span class="footer-app-name">O'salon</span>
+        </div>
+        <p class="footer-tagline" id="footerTagline">Find the best salons &amp; barbershops near you in Morocco.</p>
+      </div>
+      <nav class="footer-links">
+        <a href="#" id="footerPrivacy">Privacy Policy</a>
+        <a href="#" id="footerContact">Contact</a>
+      </nav>
+    </div>
+    <p class="footer-bottom" id="footerCopy"></p>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  var T = {
+    en: {
+      pageTitle:"O'salon — Find the Best Salons in Morocco",
+      navCta:"Download App", heroBadge:"Now available in Morocco",
+      heroTitle:'Find the best <span class="grad-text">salons &amp; barbershops</span> near you',
+      heroTagline:"Discover top-rated salons, barbershops, spas and hammams across Morocco. Browse, compare, and book your next appointment in seconds.",
+      comingSoon:"🚀 Launching soon on App Store &amp; Google Play", soonTag:"Soon",
+      appStoreSub:"Download on the", appStoreLabel:"App Store",
+      googlePlaySub:"Get it on", googlePlayLabel:"Google Play",
+      progressLabel:"App review in progress · Almost there!",
+      phoneText:"Salons &amp; Barbershops<br>near you in Morocco",
+      menMode:"Men Mode", womenMode:"Women Mode",
+      aboutTag:"What is O'salon", aboutTitle:"Your beauty &amp; grooming companion",
+      aboutBody:"O'salon is a mobile app designed for Morocco — connecting people with the best salons, barbershops, spas, and hammams in their city. Available in both Men and Women modes, O'salon makes it effortless to discover, compare, and book.",
+      statSalons:"Salons listed", statCities:"Cities covered", statModes:"Men &amp; Women modes",
+      typesTag:"Salon Types", typesTitle:"For every beauty &amp; grooming need",
+      typesBody:"O'salon covers all types of beauty and wellness venues across Morocco — from modern barbershops to traditional hammams.",
+      t1Name:"Barbershop", t1Desc:"Modern cuts, beard trims &amp; traditional shaves for men.",
+      t2Name:"Women's Salon", t2Desc:"Hair styling, coloring, and full beauty treatments.",
+      t3Name:"Spa &amp; Hammam", t3Desc:"Relaxation, traditional hammam &amp; wellness sessions.",
+      t4Name:"Hijama", t4Desc:"Traditional cupping therapy by certified specialists.",
+      t5Name:"Hair Studio", t5Desc:"Extensions, coloring, keratin &amp; advanced hair care.",
+      t6Name:"Nail &amp; Beauty", t6Desc:"Manicure, pedicure &amp; nail art studios.",
+      tagMen:"Men", tagWomen:"Women",
+      featuresTag:"Features", featuresTitle:"Everything you need in one app",
+      featuresBody:"From discovery to booking, O'salon covers every step of your beauty &amp; grooming journey.",
+      f1Title:"Find nearby salons", f1Desc:"Browse salons and barbershops close to you, filtered by city and service type.",
+      f2Title:"Reviews &amp; ratings", f2Desc:"Read honest reviews from real customers and choose with confidence.",
+      f3Title:"Easy booking", f3Desc:"Select your service, pick a time slot, and confirm your appointment in seconds.",
+      f4Title:"Men &amp; Women modes", f4Desc:"Switch between dedicated Men and Women experiences tailored to each audience.",
+      howTag:"How it works", howTitle:"3 simple steps",
+      howBody:"Getting your next appointment has never been this easy.",
+      s1Title:"Choose your city", s1Desc:"Select your city or let the app detect your location to see salons near you.",
+      s2Title:"Find a salon near you", s2Desc:"Browse profiles, photos, services, and reviews to pick the perfect place.",
+      s3Title:"Book your appointment", s3Desc:"Choose your professional, pick a time, and you're all set. It's that simple.",
+      ctaTitle:"Ready to book your next session?",
+      ctaBody:"Download O'salon for free and discover the best salons and barbershops in your city.",
+      footerTagline:"Find the best salons &amp; barbershops near you in Morocco.",
+      footerPrivacy:"Privacy Policy", footerContact:"Contact",
+      footerCopy:"© {year} O'salon. All rights reserved."
+    },
+    fr: {
+      pageTitle:"O'salon — Les Meilleurs Salons au Maroc",
+      navCta:"Télécharger", heroBadge:"Disponible au Maroc",
+      heroTitle:'Trouvez les meilleurs <span class="grad-text">salons &amp; barbiers</span> près de vous',
+      heroTagline:"Découvrez les meilleurs salons, barbiers, spas et hammams du Maroc. Comparez et réservez votre prochain rendez-vous en quelques secondes.",
+      comingSoon:"🚀 Bientôt disponible sur App Store &amp; Google Play", soonTag:"Bientôt",
+      appStoreSub:"Télécharger sur l'", appStoreLabel:"App Store",
+      googlePlaySub:"Disponible sur", googlePlayLabel:"Google Play",
+      progressLabel:"Révision en cours · Presque prêt !",
+      phoneText:"Salons &amp; Barbiers<br>près de vous au Maroc",
+      menMode:"Mode Hommes", womenMode:"Mode Femmes",
+      aboutTag:"Qu'est-ce qu'O'salon", aboutTitle:"Votre compagnon beauté &amp; coiffure",
+      aboutBody:"O'salon est une application mobile conçue pour le Maroc — mettant en relation les utilisateurs avec les meilleurs salons, barbiers, spas et hammams de leur ville.",
+      statSalons:"Salons référencés", statCities:"Villes couvertes", statModes:"Modes H &amp; F",
+      typesTag:"Types de salons", typesTitle:"Pour chaque besoin beauté &amp; bien-être",
+      typesBody:"O'salon couvre tous les types d'établissements de beauté au Maroc — des barbiers modernes aux hammams traditionnels.",
+      t1Name:"Barbier", t1Desc:"Coupes modernes, taille de barbe &amp; rasages traditionnels pour hommes.",
+      t2Name:"Salon Femmes", t2Desc:"Coiffure, coloration et soins beauté complets.",
+      t3Name:"Spa &amp; Hammam", t3Desc:"Relaxation, hammam traditionnel &amp; séances bien-être.",
+      t4Name:"Hijama", t4Desc:"Thérapie de ventouses traditionnelle par des spécialistes certifiés.",
+      t5Name:"Studio Capillaire", t5Desc:"Extensions, colorations, kératine &amp; soins capillaires avancés.",
+      t6Name:"Ongles &amp; Beauté", t6Desc:"Manucure, pédicure &amp; nail art.",
+      tagMen:"Hommes", tagWomen:"Femmes",
+      featuresTag:"Fonctionnalités", featuresTitle:"Tout ce dont vous avez besoin",
+      featuresBody:"De la découverte à la réservation, O'salon couvre chaque étape de votre parcours beauté.",
+      f1Title:"Trouver des salons proches", f1Desc:"Parcourez les salons et barbiers près de chez vous, filtrés par ville et service.",
+      f2Title:"Avis &amp; notes", f2Desc:"Lisez des avis honnêtes de vrais clients et choisissez en toute confiance.",
+      f3Title:"Réservation facile", f3Desc:"Sélectionnez votre service, choisissez un créneau et confirmez en quelques secondes.",
+      f4Title:"Modes Hommes &amp; Femmes", f4Desc:"Basculez entre les expériences dédiées Hommes et Femmes.",
+      howTag:"Comment ça marche", howTitle:"3 étapes simples",
+      howBody:"Prendre votre prochain rendez-vous n'a jamais été aussi simple.",
+      s1Title:"Choisissez votre ville", s1Desc:"Sélectionnez votre ville ou laissez l'application détecter votre position.",
+      s2Title:"Trouvez un salon", s2Desc:"Parcourez les profils, photos, services et avis pour trouver l'endroit idéal.",
+      s3Title:"Réservez votre rendez-vous", s3Desc:"Choisissez votre professionnel, sélectionnez un horaire et c'est tout.",
+      ctaTitle:"Prêt pour votre prochaine session ?",
+      ctaBody:"Téléchargez O'salon gratuitement et découvrez les meilleurs salons de votre ville.",
+      footerTagline:"Trouvez les meilleurs salons &amp; barbiers au Maroc.",
+      footerPrivacy:"Politique de confidentialité", footerContact:"Contact",
+      footerCopy:"© {year} O'salon. Tous droits réservés."
+    },
+    ar: {
+      pageTitle:"أوصالون — أفضل الصالونات في المغرب",
+      navCta:"تحميل التطبيق", heroBadge:"متوفر الآن في المغرب",
+      heroTitle:'اعثر على أفضل <span class="grad-text">صالونات التجميل والحلاقة</span> بالقرب منك',
+      heroTagline:"اكتشف أفضل الصالونات ومحلات الحلاقة والسبا والحمام في المغرب. تصفح وقارن واحجز موعدك القادم في ثوانٍ.",
+      comingSoon:"🚀 قريباً على App Store و Google Play", soonTag:"قريباً",
+      appStoreSub:"تنزيل من", appStoreLabel:"App Store",
+      googlePlaySub:"متوفر على", googlePlayLabel:"Google Play",
+      progressLabel:"مراجعة التطبيق جارية · على وشك الاكتمال!",
+      phoneText:"صالونات ومحلات حلاقة<br>بالقرب منك في المغرب",
+      menMode:"وضع الرجال", womenMode:"وضع النساء",
+      aboutTag:"ما هو أوصالون", aboutTitle:"رفيقك في التجميل والعناية",
+      aboutBody:"أوصالون هو تطبيق موبايل مصمم للمغرب — يربطك بأفضل الصالونات ومحلات الحلاقة والسبا والحمامات في مدينتك.",
+      statSalons:"صالون مدرج", statCities:"مدينة مغطاة", statModes:"وضعان: رجال ونساء",
+      typesTag:"أنواع الصالونات", typesTitle:"لكل احتياجات التجميل والعناية",
+      typesBody:"يغطي أوصالون جميع أنواع منشآت التجميل والعافية في المغرب — من محلات الحلاقة العصرية إلى الحمامات التقليدية.",
+      t1Name:"حلاق", t1Desc:"قصات عصرية وتشكيل اللحية والحلاقة التقليدية للرجال.",
+      t2Name:"صالون نسائي", t2Desc:"تصفيف الشعر والصباغة وعلاجات التجميل الكاملة.",
+      t3Name:"سبا وحمام", t3Desc:"الاسترخاء والحمام التقليدي وجلسات العافية.",
+      t4Name:"الحجامة", t4Desc:"العلاج بالحجامة التقليدية على يد متخصصين معتمدين.",
+      t5Name:"استوديو الشعر", t5Desc:"إضافات وصباغة وكيراتين وعناية متقدمة بالشعر.",
+      t6Name:"الأظافر والتجميل", t6Desc:"مانيكير وباديكير وفن الأظافر.",
+      tagMen:"رجال", tagWomen:"نساء",
+      featuresTag:"المميزات", featuresTitle:"كل ما تحتاجه في تطبيق واحد",
+      featuresBody:"من الاكتشاف إلى الحجز، يغطي أوصالون كل خطوة في رحلتك.",
+      f1Title:"اعثر على صالونات قريبة", f1Desc:"تصفح الصالونات بالقرب منك، مصنفة حسب المدينة ونوع الخدمة.",
+      f2Title:"تقييمات ومراجعات", f2Desc:"اقرأ تقييمات صادقة من عملاء حقيقيين واختر بثقة.",
+      f3Title:"حجز سهل", f3Desc:"اختر خدمتك، حدد موعدك، وأكد حجزك في ثوانٍ.",
+      f4Title:"وضع الرجال والنساء", f4Desc:"تنقل بين تجربتي الرجال والنساء المخصصتين لكل جمهور.",
+      howTag:"كيف يعمل", howTitle:"٣ خطوات بسيطة",
+      howBody:"لم يكن حجز موعدك القادم بهذه السهولة من قبل.",
+      s1Title:"اختر مدينتك", s1Desc:"حدد مدينتك أو دع التطبيق يكتشف موقعك لعرض الصالونات القريبة.",
+      s2Title:"ابحث عن صالون", s2Desc:"تصفح الملفات والصور والخدمات والتقييمات لاختيار المكان المثالي.",
+      s3Title:"احجز موعدك", s3Desc:"اختر متخصصك، حدد الوقت المناسب، وانتهيت. الأمر بهذه البساطة.",
+      ctaTitle:"هل أنت مستعد لجلستك القادمة؟",
+      ctaBody:"نزّل أوصالون مجاناً واكتشف أفضل الصالونات في مدينتك.",
+      footerTagline:"اعثر على أفضل الصالونات ومحلات الحلاقة بالقرب منك في المغرب.",
+      footerPrivacy:"سياسة الخصوصية", footerContact:"تواصل معنا",
+      footerCopy:"© {year} O'salon. جميع الحقوق محفوظة."
+    }
+  };
+
+  var idMap = {
+    navCta:"navCta", heroBadge:"heroBadge", heroTitle:"heroTitle",
+    heroTagline:"heroTagline", comingSoonNotice:"comingSoon",
+    soonTag1:"soonTag", soonTag2:"soonTag", soonTag3:"soonTag", soonTag4:"soonTag",
+    appStoreSub:"appStoreSub", appStoreLabel:"appStoreLabel",
+    googlePlaySub:"googlePlaySub", googlePlayLabel:"googlePlayLabel",
+    appStoreSub2:"appStoreSub", appStoreLabel2:"appStoreLabel",
+    googlePlaySub2:"googlePlaySub", googlePlayLabel2:"googlePlayLabel",
+    progressLabel:"progressLabel", phoneText:"phoneText",
+    menMode:"menMode", womenMode:"womenMode", menMode2:"menMode", womenMode2:"womenMode",
+    aboutTag:"aboutTag", aboutTitle:"aboutTitle", aboutBody:"aboutBody",
+    statSalons:"statSalons", statCities:"statCities", statModes:"statModes",
+    typesTag:"typesTag", typesTitle:"typesTitle", typesBody:"typesBody",
+    t1Name:"t1Name", t1Desc:"t1Desc", t1Tag1:"tagMen",
+    t2Name:"t2Name", t2Desc:"t2Desc", t2Tag1:"tagWomen",
+    t3Name:"t3Name", t3Desc:"t3Desc", t3Tag1:"tagMen", t3Tag2:"tagWomen",
+    t4Name:"t4Name", t4Desc:"t4Desc", t4Tag1:"tagMen", t4Tag2:"tagWomen",
+    t5Name:"t5Name", t5Desc:"t5Desc", t5Tag1:"tagWomen",
+    t6Name:"t6Name", t6Desc:"t6Desc", t6Tag1:"tagWomen",
+    featuresTag:"featuresTag", featuresTitle:"featuresTitle", featuresBody:"featuresBody",
+    f1Title:"f1Title", f1Desc:"f1Desc", f2Title:"f2Title", f2Desc:"f2Desc",
+    f3Title:"f3Title", f3Desc:"f3Desc", f4Title:"f4Title", f4Desc:"f4Desc",
+    howTag:"howTag", howTitle:"howTitle", howBody:"howBody",
+    s1Title:"s1Title", s1Desc:"s1Desc", s2Title:"s2Title", s2Desc:"s2Desc",
+    s3Title:"s3Title", s3Desc:"s3Desc",
+    ctaTitle:"ctaTitle", ctaBody:"ctaBody", ctaNotice:"comingSoon",
+    footerTagline:"footerTagline", footerPrivacy:"footerPrivacy", footerContact:"footerContact"
+  };
+
+  function setLang(lang) {
+    if (!T[lang]) return;
+    var data = T[lang];
+    var year = new Date().getFullYear();
+    var html = document.documentElement;
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.title = data.pageTitle;
+    for (var id in idMap) {
+      var el = document.getElementById(id);
+      if (el && data[idMap[id]] !== undefined) el.innerHTML = data[idMap[id]];
+    }
+    var copy = document.getElementById('footerCopy');
+    if (copy) copy.innerHTML = data.footerCopy.replace('{year}', year);
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    try { localStorage.setItem('osalonLang', lang); } catch(e) {}
+  }
+
+  /* Language buttons */
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { setLang(btn.getAttribute('data-lang')); });
+  });
+
+  /* Dark / Light toggle */
+  var themeBtn = document.getElementById('themeBtn');
+  var savedTheme = 'light';
+  try { savedTheme = localStorage.getItem('osalonTheme') || 'light'; } catch(e) {}
+  if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+
+  themeBtn.addEventListener('click', function() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      try { localStorage.setItem('osalonTheme', 'light'); } catch(e) {}
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      try { localStorage.setItem('osalonTheme', 'dark'); } catch(e) {}
+    }
+  });
+
+  /* Init */
+  var initLang = 'en';
+  try { initLang = localStorage.getItem('osalonLang') || 'en'; } catch(e) {}
+  if (!T[initLang]) initLang = 'en';
+  setLang(initLang);
+
+  // Keep placeholder links from triggering noisy file:// hash navigations.
+  document.querySelectorAll('a[href="#"]').forEach(function(link) {
+    link.addEventListener('click', function(e) { e.preventDefault(); });
+  });
+
+  /* Scroll fade-in */
+  var items = document.querySelectorAll('.fade-in');
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('vis'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    items.forEach(function(el) { observer.observe(el); });
+  } else {
+    items.forEach(function(el) { el.classList.add('vis'); });
+  }
+  items.forEach(function(el) {
+    if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('vis');
+  });
+});
+</script>
+</body>
+</html>
